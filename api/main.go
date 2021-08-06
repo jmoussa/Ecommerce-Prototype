@@ -6,13 +6,14 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/jmoussa/Ecommerce-Prototype/api/handlers"
 	"github.com/nicholasjackson/env"
 )
 
-var bindAddress = env.String("BIND_ADDRESS", false, ":9090", "Bind address for the server")
+var bindAddress = env.String("BIND_ADDRESS", false, "localhost:9090", "Bind address for the server")
 
 func main() {
 
@@ -40,7 +41,7 @@ func main() {
 
 	// start the server
 	go func() {
-		l.Println("Starting server on: %s\n", *bindAddress)
+		l.Printf("Starting server on: %s\n", *bindAddress)
 
 		err := s.ListenAndServe()
 		if err != nil {
@@ -52,7 +53,7 @@ func main() {
 	// trap sigterm or interupt and gracefully shutdown the server
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
-	signal.Notify(c, os.Kill)
+	signal.Notify(c, syscall.SIGTERM)
 
 	// Block until a signal is received.
 	sig := <-c
