@@ -8,7 +8,7 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/jmoussa/coffee_shop_ecommerce/handlers"
+	"github.com/jmoussa/Ecommerce-Prototype/handlers"
 	"github.com/nicholasjackson/env"
 )
 
