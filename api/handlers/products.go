@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/jmoussa/Ecommerce-Prototype/data"
+	"github.com/jmoussa/Ecommerce-Prototype/api/data"
 )
 
 type Products struct {
