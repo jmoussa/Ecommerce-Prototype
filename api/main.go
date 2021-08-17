@@ -9,6 +9,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/gorilla/mux"
 	"github.com/jmoussa/Ecommerce-Prototype/api/handlers"
 	"github.com/nicholasjackson/env"
 )
@@ -26,8 +27,17 @@ func main() {
 	ph := handlers.NewProducts(l)
 
 	// create a new serve mux and register the handlers
-	sm := http.NewServeMux()
-	sm.Handle("/", ph)
+	sm := mux.NewRouter()
+	getRouter := sm.Methods(http.MethodGet).Subrouter()
+	getRouter.HandleFunc("/", ph.GetProducts)
+
+	putRouter := sm.Methods(http.MethodPut).Subrouter()
+	putRouter.Use(ph.MiddlewareValidateProduct)
+	putRouter.HandleFunc("/{id:[0-9]+}", ph.UpdateProducts)
+
+	postRouter := sm.Methods(http.MethodPost).Subrouter()
+	postRouter.Use(ph.MiddlewareValidateProduct)
+	postRouter.HandleFunc("/", ph.AddProduct)
 
 	// create a new server
 	s := http.Server{
@@ -39,7 +49,7 @@ func main() {
 		IdleTimeout:  120 * time.Second,
 	}
 
-	// start the server
+	// start the server coroutine
 	go func() {
 		l.Printf("Starting server on: %s\n", *bindAddress)
 
